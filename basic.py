@@ -3,13 +3,10 @@ import paho.mqtt.client as mqtt
 class State:
     def __init__(self):
         self.next_state_dict = {}
-    def next_state(self, input_state_pair):
-        # Define transition from this state using this_state.next_state( (symbol,next_state) )
-        '''
-        TODO -  Take variable number of multiple input_state_pairs as input
-                Expected usage is this_state.next_state( input_state_pair1, input_state_pair2, ... )
-        '''
-        self.next_state_dict[input_state_pair[0]] = input_state_pair[1]
+    def next_state(self, *args):
+        #Set transition for self from self to next state based on variable length symbol list
+        for input_state_pair in args:
+            self.next_state_dict[input_state_pair[0]] = input_state_pair[1]
     def on_symbol(self, symbol):
         # Return next_state for transition from this_state on symbol
         return self.next_state_dict[symbol]
@@ -48,8 +45,8 @@ if __name__ == '__main__':
     b = State()
     a.set_action(runA)
     b.set_action(runB)
-    a.next_state(('x',b))
-    b.next_state(('x',a))
+    a.next_state(('x',b), ('y',b))
+    b.next_state(('x',a), ('y',a))
     initial_state = a
 
     # MQTT client initialization
